@@ -1,5 +1,6 @@
 require 'redguide/api/client'
 require 'redguide/api/changeset'
+require 'redguide/api/cookbook'
 
 module Redguide
   module API
@@ -32,6 +33,24 @@ module Redguide
       def create_changeset(key, description)
         resp = post("projects/#{self.key}/changesets", 'changeset', {key: key, description: description})
         Changeset.new(self, resp['key'])
+      end
+
+      def cookbooks
+        cookbooks = []
+        get("projects/#{key}/cookbooks").each do |c|
+          cookbooks << Cookbook.new(self, c['name'], c['vcs_url'])
+        end
+        cookbooks
+      end
+
+      def cookbook(name)
+        c = get("projects/#{key}/cookbooks/#{name}")
+        Cookbook.new(self, c['name'], c['vcs_url'])
+      end
+
+      def create_cookbooks(name, vcs_url)
+        resp = post("projects/#{self.slug}/cookbooks", 'cookbook', {name: name, vcs_url: vcs_url})
+        Cookbook.new(self, resp['name'], resp['vcs_url'])
       end
 
       def slug

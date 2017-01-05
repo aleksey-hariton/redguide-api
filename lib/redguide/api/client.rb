@@ -22,7 +22,13 @@ module Redguide
       protected
 
       def get(path)
-        JSON.parse(connection[path].get.body)
+        begin
+          get = connection[path].get
+        rescue RestClient::Unauthorized
+          relogin
+          get = connection[path].get
+        end
+        JSON.parse(get.body)
       rescue RestClient::ExceptionWithResponse => e
         abort "ERROR: #{e.response}"
       rescue RestClient::Exception => e
@@ -30,7 +36,13 @@ module Redguide
       end
 
       def post(path, what, options)
-        JSON.parse(connection[path].post({what => options }).body)
+        begin
+          post = connection[path].post({what => options })
+        rescue RestClient::Unauthorized
+          relogin
+          post = connection[path].post({what => options })
+        end
+        JSON.parse(post.body)
       rescue RestClient::ExceptionWithResponse => e
         abort "ERROR: #{e.response}"
       rescue RestClient::Exception => e
@@ -40,10 +52,15 @@ module Redguide
       private
 
       def connection
-        @connection ||= connect
+        @connection ||= login
       end
 
-      def connect
+      def relogin
+        @connection = nil
+        login
+      end
+
+      def login
         url = "#{Redguide::API::server}/api/v1/"
         api = RestClient::Resource.new(url)
 
