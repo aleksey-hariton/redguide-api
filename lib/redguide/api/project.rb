@@ -61,6 +61,22 @@ module Redguide
         @key.upcase
       end
 
+      def supermarket_config
+        {
+            url: project['supermarket_url'],
+            user: project['chef_user'],
+            pem: project['chef_user_pem']
+        }
+      end
+
+      def chef_user
+        project['chef_user']
+      end
+
+      def chef_user_pem
+        project['chef_user_pem']
+      end
+
       private
       def project
         @project ||= get("projects/#{key}")
