@@ -62,8 +62,8 @@ module Redguide
         configs
       end
 
-      def config(id)
-        c = get("projects/#{key}/prconfigs/#{id}")
+      def config(name)
+        c = get("projects/#{key}/prconfigs/get_by_name?name=#{name}")
         Prconfig.new(self, c['name'], c['content'])
       end
 
