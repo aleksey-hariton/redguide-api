@@ -1,6 +1,7 @@
 require 'redguide/api/client'
 require 'redguide/api/changeset'
 require 'redguide/api/cookbook'
+require 'redguide/api/prconfig'
 
 module Redguide
   module API
@@ -51,6 +52,19 @@ module Redguide
       def create_cookbooks(name, vcs_url)
         resp = post("projects/#{self.slug}/cookbooks", 'cookbook', {name: name, vcs_url: vcs_url})
         Cookbook.new(self, resp['name'], resp['vcs_url'])
+      end
+
+      def configs
+        configs = []
+        get("projects/#{key}/prconfigs").each do |c|
+          configs << Prconfig.new(self,c['name'], c['content'])
+        end
+        configs
+      end
+
+      def config(id)
+        c = get("projects/#{key}/prconfigs/#{id}")
+        Prconfig.new(self, c['name'], c['content'])
       end
 
       def slug
