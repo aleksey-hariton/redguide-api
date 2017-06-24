@@ -2,7 +2,7 @@ require 'redguide/api/client'
 
 module Redguide
   module API
-    class Prconfig < Client
+    class ProjectConfig < Client
       attr_reader :name
       attr_reader :content
       attr_reader :project
