@@ -1,7 +1,7 @@
 require 'redguide/api/client'
 require 'redguide/api/changeset'
 require 'redguide/api/cookbook'
-require 'redguide/api/prconfig'
+require 'redguide/api/project_config'
 
 module Redguide
   module API
@@ -56,15 +56,15 @@ module Redguide
 
       def configs
         configs = []
-        get("projects/#{key}/prconfigs").each do |c|
-          configs << Prconfig.new(self,c['name'], c['content'])
+        get("projects/#{key}/project_configs").each do |c|
+          configs << ProjectConfig.new(self,c['name'], c['content'])
         end
         configs
       end
 
       def config(name)
-        c = get("projects/#{key}/prconfigs/get_by_name?name=#{name}")
-        Prconfig.new(self, c['name'], c['content'])
+        c = get("projects/#{key}/project_configs/get_by_name?name=#{name}")
+        ProjectConfig.new(self, c['name'], c['content'])
       end
 
       def slug
